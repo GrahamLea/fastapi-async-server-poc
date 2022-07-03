@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+PYTHON_VERSION="$(python3 --version)"
+
+if [[ ! $PYTHON_VERSION =~ ^Python\ 3\.1[0-9]\.[0-9]+$ ]]; then
+  echo "Invalid Python version. Required: 3.10+. Found: $PYTHON_VERSION" >&2
+  exit 1
+fi
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd "$SCRIPT_DIR"/..
+
+python3 -m venv venv
+venv/bin/pip install -r requirements.txt
+
+cat /dev/urandom | LC_CTYPE=C tr -dc '[:alpha:]' | fold -w ${1:-120} | head -n 10000 > random.txt
